@@ -1,7 +1,16 @@
+import processing.core.PImage;
+
+import java.util.List;
+import java.util.Optional;
+
 public final class Point
 {
     public final int x;
     public final int y;
+
+    private static final String QUAKE_ID = "quake";
+    private static final int QUAKE_ACTION_PERIOD = 1100;
+    private static final int QUAKE_ANIMATION_PERIOD = 100;
 
     public Point(int x, int y) {
         this.x = x;
@@ -22,5 +31,90 @@ public final class Point
         result = result * 31 + x;
         result = result * 31 + y;
         return result;
+    }
+    public  boolean adjacent( Point p2) {
+        return (this.x == p2.x && Math.abs(this.y - p2.y) == 1) || (this.y == p2.y
+                && Math.abs(this.x - p2.x) == 1);
+    }
+
+    private static int distanceSquared(Point p1, Point p2) {
+        int deltaX = p1.x - p2.x;
+        int deltaY = p1.y - p2.y;
+
+        return deltaX * deltaX + deltaY * deltaY;
+    }
+    public  Optional<Entity> nearestEntity(List<Entity> entities)
+    {
+        if (entities.isEmpty()) {
+            return Optional.empty();
+        }
+        else {
+            Entity nearest = entities.get(0);
+            int nearestDistance = distanceSquared(nearest.position, this);
+
+            for (Entity other : entities) {
+                int otherDistance = distanceSquared(other.position, this);
+
+                if (otherDistance < nearestDistance) {
+                    nearest = other;
+                    nearestDistance = otherDistance;
+                }
+            }
+
+            return Optional.of(nearest);
+        }
+    }
+
+    public  Entity createBlacksmith(String id, List<PImage> images)
+    {
+        return new Entity(EntityKind.BLACKSMITH, id, this, images, 0, 0, 0,
+                0);
+    }
+
+    public  Entity createMinerFull(String id, int resourceLimit,  int actionPeriod, int animationPeriod,
+            List<PImage> images)
+    {
+        return new Entity(EntityKind.MINER_FULL, id, this, images,
+                resourceLimit, resourceLimit, actionPeriod,
+                animationPeriod);
+    }
+
+    public  Entity createMinerNotFull(String id, int resourceLimit, int actionPeriod,
+            int animationPeriod,
+            List<PImage> images)
+    {
+        return new Entity(EntityKind.MINER_NOT_FULL, id, this, images,
+                resourceLimit, 0, actionPeriod, animationPeriod);
+    }
+
+    public  Entity createObstacle(String id, List<PImage> images)
+    {
+        return new Entity(EntityKind.OBSTACLE, id, this, images, 0, 0, 0,
+                0);
+    }
+
+    public  Entity createOre(String id, int actionPeriod, List<PImage> images)
+    {
+        return new Entity(EntityKind.ORE, id, this, images, 0, 0,
+                actionPeriod, 0);
+    }
+
+    public  Entity createOreBlob(String id, int actionPeriod, int animationPeriod,
+            List<PImage> images)
+    {
+        return new Entity(EntityKind.ORE_BLOB, id, this, images, 0, 0,
+                actionPeriod, animationPeriod);
+    }
+
+    public  Entity createQuake( List<PImage> images)
+    {
+        return new Entity(EntityKind.QUAKE, QUAKE_ID, this, images, 0, 0,
+                QUAKE_ACTION_PERIOD, QUAKE_ANIMATION_PERIOD);
+    }
+
+    public  Entity createVein(String id,  int actionPeriod, List<PImage> images)
+    {
+        return new Entity(EntityKind.VEIN, id, this, images, 0, 0,
+                actionPeriod, 0);
     }
 }

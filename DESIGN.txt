@@ -1,0 +1,15 @@
+/*
+ For getCurrentImage() I put it both in Background.java and Entity.java because it contained "blank instanceof class"
+ which had it for either. So I deleted those lines so that the instanceof matched the right class.
+
+ I put the createBlacksmith and all the rest until createVien(top to bottom order) to Point instead of
+ Entity, however it could go either way. Yet, I chose Point because the class was contained in the parameter.
+
+ In some classes, I reused ORE_KEY because that class contained a method that required it to function. I believe I
+ used it on both Entity and WorldModel.
+
+ I put createAnimationAction and createActivityAction in Entity rather than Action because it's parameter contained
+ Entity.
+
+ Also, I set adjacent within Point since it behaved more like a point.
+*/
