@@ -5,12 +5,8 @@ import java.util.Optional;
 
 public final class Point
 {
-    public final int x;
-    public final int y;
-
-    private static final String QUAKE_ID = "quake";
-    private static final int QUAKE_ACTION_PERIOD = 1100;
-    private static final int QUAKE_ANIMATION_PERIOD = 100;
+    private final int x;
+    private final int y;
 
     public Point(int x, int y) {
         this.x = x;
@@ -25,6 +21,10 @@ public final class Point
         return other instanceof Point && ((Point)other).x == this.x
                 && ((Point)other).y == this.y;
     }
+
+    public int getX() { return this.x;}
+
+    public int getY() { return this.y;}
 
     public int hashCode() {
         int result = 17;
@@ -50,10 +50,10 @@ public final class Point
         }
         else {
             Entity nearest = entities.get(0);
-            int nearestDistance = distanceSquared(nearest.position, this);
+            int nearestDistance = distanceSquared(nearest.getPosition(), this);
 
             for (Entity other : entities) {
-                int otherDistance = distanceSquared(other.position, this);
+                int otherDistance = distanceSquared(other.getPosition(), this);
 
                 if (otherDistance < nearestDistance) {
                     nearest = other;
@@ -65,56 +65,21 @@ public final class Point
         }
     }
 
-    public  Entity createBlacksmith(String id, List<PImage> images)
+    public  Ore createOre(String id,  int actionPeriod, List<PImage> images)
     {
-        return new Entity(EntityKind.BLACKSMITH, id, this, images, 0, 0, 0,
-                0);
+        return new Ore(id, this, images, actionPeriod);
+    }
+    public  Blacksmith createBlacksmith(String id,  List<PImage> images)
+    {
+        return new Blacksmith(id, this, images);
+    }
+    public  Vein createVein(String id,  int actionPeriod, List<PImage> images)
+    {
+        return new Vein( id, this, images, actionPeriod);
+    }
+    public  Obstacle createObstacle(String id,  List<PImage> images)
+    {
+        return new Obstacle(id, this, images);
     }
 
-    public  Entity createMinerFull(String id, int resourceLimit,  int actionPeriod, int animationPeriod,
-            List<PImage> images)
-    {
-        return new Entity(EntityKind.MINER_FULL, id, this, images,
-                resourceLimit, resourceLimit, actionPeriod,
-                animationPeriod);
-    }
-
-    public  Entity createMinerNotFull(String id, int resourceLimit, int actionPeriod,
-            int animationPeriod,
-            List<PImage> images)
-    {
-        return new Entity(EntityKind.MINER_NOT_FULL, id, this, images,
-                resourceLimit, 0, actionPeriod, animationPeriod);
-    }
-
-    public  Entity createObstacle(String id, List<PImage> images)
-    {
-        return new Entity(EntityKind.OBSTACLE, id, this, images, 0, 0, 0,
-                0);
-    }
-
-    public  Entity createOre(String id, int actionPeriod, List<PImage> images)
-    {
-        return new Entity(EntityKind.ORE, id, this, images, 0, 0,
-                actionPeriod, 0);
-    }
-
-    public  Entity createOreBlob(String id, int actionPeriod, int animationPeriod,
-            List<PImage> images)
-    {
-        return new Entity(EntityKind.ORE_BLOB, id, this, images, 0, 0,
-                actionPeriod, animationPeriod);
-    }
-
-    public  Entity createQuake( List<PImage> images)
-    {
-        return new Entity(EntityKind.QUAKE, QUAKE_ID, this, images, 0, 0,
-                QUAKE_ACTION_PERIOD, QUAKE_ANIMATION_PERIOD);
-    }
-
-    public  Entity createVein(String id,  int actionPeriod, List<PImage> images)
-    {
-        return new Entity(EntityKind.VEIN, id, this, images, 0, 0,
-                actionPeriod, 0);
-    }
 }

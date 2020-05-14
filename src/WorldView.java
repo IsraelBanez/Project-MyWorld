@@ -30,17 +30,17 @@ public final class WorldView
     }
 
     public  void shiftView( int colDelta, int rowDelta) {
-        int newCol = clamp(this.viewport.col + colDelta, 0,
-                this.world.numCols - this.viewport.numCols);
-        int newRow = clamp(this.viewport.row + rowDelta, 0,
-                this.world.numRows - this.viewport.numRows);
+        int newCol = clamp(this.viewport.getCol() + colDelta, 0,
+                this.world.getNumCols() - this.viewport.getNumCols());
+        int newRow = clamp(this.viewport.getRow() + rowDelta, 0,
+                this.world.getNumRows() - this.viewport.getNumRows());
 
         this.viewport.shift( newCol, newRow);
     }
 
     private  void drawBackground() {
-        for (int row = 0; row < this.viewport.numRows; row++) {
-            for (int col = 0; col < this.viewport.numCols; col++) {
+        for (int row = 0; row < this.viewport.getNumRows(); row++) {
+            for (int col = 0; col < this.viewport.getNumCols(); col++) {
                 Point worldPoint = this.viewport.viewportToWorld(col, row);
                 Optional<PImage> image = this.world.getBackgroundImage( worldPoint);
                 if (image.isPresent()) {
@@ -52,14 +52,14 @@ public final class WorldView
     }
 
     private  void drawEntities() {
-        for (Entity entity : this.world.entities) {
-            Point pos = entity.position;
+        for (Entity entity : this.world.getEntities()) {
+            Point pos = entity.getPosition();
 
             if (this.viewport.contains(pos)) {
-                Point viewPoint = this.viewport.worldToViewport(pos.x, pos.y);
+                Point viewPoint = this.viewport.worldToViewport(pos.getX(), pos.getY());
                 this.screen.image(entity.getCurrentImage(),
-                        viewPoint.x * this.tileWidth,
-                        viewPoint.y * this.tileHeight);
+                        viewPoint.getX() * this.tileWidth,
+                        viewPoint.getY() * this.tileHeight);
             }
         }
     }

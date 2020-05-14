@@ -4,15 +4,19 @@ import java.util.*;
 
 public final class WorldModel
 {
-    public int numRows;
-    public int numCols;
+    private int numRows;
+    private int numCols;
     private Background background[][];
     private Entity occupancy[][];
-    public Set<Entity> entities;
+    private Set<Entity> entities;
 
     private static final int ORE_REACH = 1;
 
     private static final int PROPERTY_KEY = 0;
+
+    private static final String QUAKE_ID = "quake";
+    private static final int QUAKE_ACTION_PERIOD = 1100;
+    private static final int QUAKE_ANIMATION_PERIOD = 100;
 
     private static final String OBSTACLE_KEY = "obstacle";
     private static final int OBSTACLE_NUM_PROPERTIES = 4;
@@ -66,6 +70,22 @@ public final class WorldModel
             Arrays.fill(this.background[row], defaultBackground);
         }
     }
+
+
+    public int getNumCols() { return numCols; }
+
+    public int getNumRows() { return numRows; }
+
+    public Background[][] getBackground(){
+        return this.background;
+    }
+
+    public Entity[][] getOccupancy(){
+        return this.occupancy;
+    }
+
+    public Set<Entity> getEntities() { return entities;}
+
     public  Optional<PImage> getBackgroundImage( Point pos)
     {
         if (this.withinBounds(pos)) {
@@ -93,21 +113,21 @@ public final class WorldModel
     }
 
     private  Entity getOccupancyCell( Point pos) {
-        return this.occupancy[pos.y][pos.x];
+        return this.occupancy[pos.getY()][pos.getX()];
     }
 
     private  void setOccupancyCell(Point pos, Entity entity)
     {
-        this.occupancy[pos.y][pos.x] = entity;
+        this.occupancy[pos.getY()][pos.getX()] = entity;
     }
 
     private  Background getBackgroundCell(Point pos) {
-        return this.background[pos.y][pos.x];
+        return this.background[pos.getY()][pos.getX()];
     }
 
     private  void setBackgroundCell(Point pos, Background background)
     {
-        this.background[pos.y][pos.x] = background;
+        this.background[pos.getY()][pos.getX()] = background;
     }
 
     public  void load(Scanner in, ImageStore imageStore)
@@ -173,8 +193,8 @@ public final class WorldModel
         if (properties.length == MINER_NUM_PROPERTIES) {
             Point pt = new Point(Integer.parseInt(properties[MINER_COL]),
                     Integer.parseInt(properties[MINER_ROW]));
-            Entity entity = pt.createMinerNotFull(properties[MINER_ID],
-                    Integer.parseInt(properties[MINER_LIMIT]),
+            Entity entity = this.createMinerNotFull(properties[MINER_ID],
+                    Integer.parseInt(properties[MINER_LIMIT]), pt,
                     Integer.parseInt(properties[MINER_ACTION_PERIOD]), Integer.parseInt(
                             properties[MINER_ANIMATION_PERIOD]),
                     imageStore.getImageList( MINER_KEY));
@@ -238,11 +258,11 @@ public final class WorldModel
 
         return properties.length == VEIN_NUM_PROPERTIES;
     }
-    public  Optional<Entity> findNearest(Point pos, EntityKind kind)
+    public  Optional<Entity> findNearest(Point pos, Class kind)
     {
         List<Entity> ofType = new LinkedList<>();
         for (Entity entity : this.entities) {
-            if (entity.kind == kind) {
+            if (kind.isInstance(entity)) {
                 ofType.add(entity);
             }
         }
@@ -255,24 +275,24 @@ public final class WorldModel
        intended destination cell.
     */
     public  void addEntity( Entity entity) {
-        if (this.withinBounds(entity.position)) {
-            this.setOccupancyCell( entity.position, entity);
+        if (this.withinBounds(entity.getPosition())) {
+            this.setOccupancyCell( entity.getPosition(), entity);
             this.entities.add(entity);
         }
     }
 
     public  void moveEntity(Entity entity, Point pos) {
-        Point oldPos = entity.position;
+        Point oldPos = entity.getPosition();
         if (this.withinBounds( pos) && !pos.equals(oldPos)) {
             this.setOccupancyCell( oldPos, null);
             this.removeEntityAt( pos);
             this.setOccupancyCell( pos, entity);
-            entity.position = pos;
+            entity.setPosition(pos);
         }
     }
 
     public  void removeEntity(Entity entity) {
-        this.removeEntityAt( entity.position);
+        this.removeEntityAt( entity.getPosition());
     }
 
     private  void removeEntityAt(Point pos) {
@@ -281,14 +301,14 @@ public final class WorldModel
 
             /* This moves the entity just outside of the grid for
              * debugging purposes. */
-            entity.position = new Point(-1, -1);
+            entity.setPosition(new Point(-1, -1));
             this.entities.remove(entity);
             this.setOccupancyCell(pos, null);
         }
     }
 
     private  void tryAddEntity( Entity entity) {
-        if (this.isOccupied(entity.position)) {
+        if (this.isOccupied(entity.getPosition())) {
             // arguably the wrong type of exception, but we are not
             // defining our own exceptions yet
             throw new IllegalArgumentException("position occupied");
@@ -298,8 +318,8 @@ public final class WorldModel
     }
 
     private  boolean withinBounds(Point pos) {
-        return pos.y >= 0 && pos.y < this.numRows && pos.x >= 0
-                && pos.x < this.numCols;
+        return pos.getY() >= 0 && pos.getY() < this.numRows && pos.getX() >= 0
+                && pos.getX() < this.numCols;
     }
 
     public  boolean isOccupied( Point pos) {
@@ -308,7 +328,7 @@ public final class WorldModel
     public  Optional<Point> findOpenAround( Point pos) {
         for (int dy = -ORE_REACH; dy <= ORE_REACH; dy++) {
             for (int dx = -ORE_REACH; dx <= ORE_REACH; dx++) {
-                Point newPt = new Point(pos.x + dx, pos.y + dy);
+                Point newPt = new Point(pos.getX() + dx, pos.getY() + dy);
                 if (this.withinBounds( newPt) && !this.isOccupied(newPt)) {
                     return Optional.of(newPt);
                 }
@@ -317,4 +337,33 @@ public final class WorldModel
 
         return Optional.empty();
     }
+    public  Miner_Full createMinerFull(String id, int resourceLimit, Point pos, int actionPeriod, int animationPeriod,
+                                   List<PImage> images)
+    {
+        return new Miner_Full( id, pos, images, resourceLimit, resourceLimit, actionPeriod, animationPeriod);
+    }
+
+    public  Miner_Not_Full createMinerNotFull(String id, int resourceLimit,  Point pos, int actionPeriod,
+                                              int animationPeriod,
+                                              List<PImage> images) {
+        return new Miner_Not_Full(id, pos, images, resourceLimit, 0, actionPeriod, animationPeriod);
+    }
+
+    public  Ore_Blob createOreBlob(String id, Point pos, int actionPeriod, int animationPeriod,
+                                 List<PImage> images)
+    {
+        return new Ore_Blob(id, pos, images, actionPeriod, animationPeriod);
+    }
+
+    public  Quake createQuake( Point position, List<PImage> images)
+    {
+        return new Quake( QUAKE_ID, position, images,
+                QUAKE_ACTION_PERIOD, QUAKE_ANIMATION_PERIOD);
+    }
+
+    public  Ore createOre(String id, Point pos, int actionPeriod, List<PImage> images)
+    {
+        return new Ore(id, pos, images, actionPeriod);
+    }
 }
+
