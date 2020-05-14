@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-public class Ore_Blob implements AnimationEntity, ActivityEntity
+public class Ore_Blob implements AnimationEntity
 {
     private String id;
     private Point position;

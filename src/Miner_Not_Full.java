@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-public class Miner_Not_Full implements AnimationEntity, ActivityEntity
+public class Miner_Not_Full implements AnimationEntity
 {
     private String id;
     private Point position;
