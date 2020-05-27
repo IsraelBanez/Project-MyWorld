@@ -65,21 +65,4 @@ public final class Point
         }
     }
 
-    public  Ore createOre(String id,  int actionPeriod, List<PImage> images)
-    {
-        return new Ore(id, this, images, actionPeriod);
-    }
-    public  Blacksmith createBlacksmith(String id,  List<PImage> images)
-    {
-        return new Blacksmith(id, this, images);
-    }
-    public  Vein createVein(String id,  int actionPeriod, List<PImage> images)
-    {
-        return new Vein( id, this, images, actionPeriod);
-    }
-    public  Obstacle createObstacle(String id,  List<PImage> images)
-    {
-        return new Obstacle(id, this, images);
-    }
-
 }

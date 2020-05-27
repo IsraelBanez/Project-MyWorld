@@ -4,15 +4,29 @@ import java.util.Random;
 
 import processing.core.PImage;
 
-public interface Entity
+public abstract class Entity
 {
-    public PImage getCurrentImage();
-    public void setPosition(Point position);
-    public void nextImage();
-    public String getId();
-    public Point getPosition();
-    public List<PImage> getImages();
-    public int getImageIndex();
-    public String getBGND();
+    private String id;
+    private Point position;
+    private List<PImage> images;
+    private String bgnd;
+    private int imageIndex;
+
+    public Entity( String id, Point position, List<PImage> images, int imageIndex, String bgnd){
+        this.id = id;
+        this.position= position;
+        this.images = images;
+        this.bgnd = bgnd;
+        this.imageIndex = imageIndex;
+    }
+
+    public PImage getCurrentImage() {return images.get(imageIndex);}
+    public void setPosition(Point pos) {position = pos;}
+    public String getId() {return id;}
+    public Point getPosition() {return position;}
+    public List<PImage> getImages() {return images;}
+    public int getImageIndex() {return imageIndex;}
+    protected void ImageIndex(int nImage) { imageIndex = nImage;}
+    public String getBGND() {return bgnd;}
 
 }
