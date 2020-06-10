@@ -49,12 +49,38 @@ public final class WorldModel
     private static final int SMITH_COL = 2;
     private static final int SMITH_ROW = 3;
 
+    private static final String TOMB_KEY = "tomb";
+    private static final int TOMB_NUM_PROPERTIES = 4;
+    private static final int TOMB_ID = 1;
+    private static final int TOMB_COL = 2;
+    private static final int TOMB_ROW = 3;
+
+    private static final String FIRE_KEY = "fire";
+    private static final int FIRE_NUM_PROPERTIES = 4;
+    private static final int FIRE_ID = 1;
+    private static final int FIRE_COL = 2;
+    private static final int FIRE_ROW = 3;
+
+
+    private static final String SMOKE_KEY = "smoke";
+    private static final int SMOKE_NUM_PROPERTIES = 4;
+    private static final int SMOKE_ID = 1;
+    private static final int SMOKE_COL = 2;
+    private static final int SMOKE_ROW = 3;
+
+    private static final String MAGE_KEY = "mage";
+    private static final int MAGE_NUM_PROPERTIES = 4;
+    private static final int MAGE_ID = 1;
+    private static final int MAGE_COL = 2;
+    private static final int MAGE_ROW = 3;
+
     private static final String ORE_KEY = "ore";
     private static final int ORE_NUM_PROPERTIES = 5;
     private static final int ORE_ID = 1;
     private static final int ORE_COL = 2;
     private static final int ORE_ROW = 3;
     private static final int ORE_ACTION_PERIOD = 4;
+
 
     public WorldModel(int numRows, int numCols, Background defaultBackground) {
         this.numRows = numRows;
@@ -93,7 +119,7 @@ public final class WorldModel
         }
     }
 
-    private  void setBackground( Point pos, Background background)
+    public  void setBackground( Point pos, Background background)
     {
         if (this.withinBounds(pos)) {
             this.setBackgroundCell( pos, background);
@@ -109,7 +135,7 @@ public final class WorldModel
         }
     }
 
-    private  Entity getOccupancyCell( Point pos) {
+    public  Entity getOccupancyCell( Point pos) {
         return this.occupancy[pos.getY()][pos.getX()];
     }
 
@@ -167,6 +193,15 @@ public final class WorldModel
                     return this.parseSmith(properties, imageStore);
                 case VEIN_KEY:
                     return this.parseVein(properties, imageStore);
+                case TOMB_KEY:
+                    return this.parseTomb(properties, imageStore);
+                case FIRE_KEY:
+                    return this.parseFire(properties, imageStore);
+                case SMOKE_KEY:
+                    return this.parseSmoke(properties, imageStore);
+                case MAGE_KEY:
+                    return this.parseMage(properties, imageStore);
+
             }
         }
 
@@ -215,18 +250,18 @@ public final class WorldModel
     }
 
     private  boolean parseOre(String[] properties, ImageStore imageStore)
-    {
-        if (properties.length == ORE_NUM_PROPERTIES) {
-            Point pt = new Point(Integer.parseInt(properties[ORE_COL]),
-                    Integer.parseInt(properties[ORE_ROW]));
-            Entity entity = Factory.createOre(properties[ORE_ID],pt, Integer.parseInt(
-                    properties[ORE_ACTION_PERIOD]),
-                    imageStore.getImageList( ORE_KEY));
-            this.tryAddEntity(entity);
-        }
-
-        return properties.length == ORE_NUM_PROPERTIES;
+{
+    if (properties.length == ORE_NUM_PROPERTIES) {
+        Point pt = new Point(Integer.parseInt(properties[ORE_COL]),
+                Integer.parseInt(properties[ORE_ROW]));
+        Entity entity = Factory.createOre(properties[ORE_ID],pt, Integer.parseInt(
+                properties[ORE_ACTION_PERIOD]),
+                imageStore.getImageList( ORE_KEY));
+        this.tryAddEntity(entity);
     }
+
+    return properties.length == ORE_NUM_PROPERTIES;
+}
 
     private  boolean parseSmith(String[] properties, ImageStore imageStore)
     {
@@ -240,6 +275,8 @@ public final class WorldModel
 
         return properties.length == SMITH_NUM_PROPERTIES;
     }
+
+
 
     private  boolean parseVein(String[] properties, ImageStore imageStore)
     {
@@ -292,7 +329,7 @@ public final class WorldModel
         this.removeEntityAt( entity.getPosition());
     }
 
-    private  void removeEntityAt(Point pos) {
+    public  void removeEntityAt(Point pos) {
         if (this.withinBounds( pos) && this.getOccupancyCell( pos) != null) {
             Entity entity = this.getOccupancyCell( pos);
 
@@ -314,7 +351,7 @@ public final class WorldModel
         this.addEntity( entity);
     }
 
-    private  boolean withinBounds(Point pos) {
+    public  boolean withinBounds(Point pos) {
         return pos.getY() >= 0 && pos.getY() < this.numRows && pos.getX() >= 0
                 && pos.getX() < this.numCols;
     }
@@ -322,6 +359,7 @@ public final class WorldModel
     public  boolean isOccupied( Point pos) {
         return this.withinBounds(pos) && this.getOccupancyCell( pos) != null;
     }
+
     public  Optional<Point> findOpenAround( Point pos) {
         for (int dy = -ORE_REACH; dy <= ORE_REACH; dy++) {
             for (int dx = -ORE_REACH; dx <= ORE_REACH; dx++) {
@@ -335,5 +373,60 @@ public final class WorldModel
         return Optional.empty();
     }
 
+    private  boolean parseTomb(String[] properties, ImageStore imageStore)
+    {
+        if (properties.length == TOMB_NUM_PROPERTIES) {
+            Point pt = new Point(Integer.parseInt(properties[TOMB_COL]),
+                    Integer.parseInt(properties[TOMB_ROW]));
+            Entity entity = Factory.createTomb(properties[TOMB_ID], pt,
+                    imageStore.getImageList(TOMB_KEY));
+            this.tryAddEntity(entity);
+        }
+
+        return properties.length == TOMB_NUM_PROPERTIES;
+    }
+
+    private  boolean parseFire(String[] properties, ImageStore imageStore)
+    {
+        if (properties.length == FIRE_NUM_PROPERTIES) {
+            Point pt = new Point(Integer.parseInt(properties[FIRE_COL]),
+                    Integer.parseInt(properties[FIRE_ROW]));
+            Entity entity = Factory.createFire(properties[FIRE_ID], pt,
+                    imageStore.getImageList(FIRE_KEY));
+            this.tryAddEntity(entity);
+        }
+
+        return properties.length == FIRE_NUM_PROPERTIES;
+    }
+
+    private  boolean parseSmoke(String[] properties, ImageStore imageStore)
+    {
+        if (properties.length == SMOKE_NUM_PROPERTIES) {
+            Point pt = new Point(Integer.parseInt(properties[SMOKE_COL]),
+                    Integer.parseInt(properties[SMOKE_ROW]));
+            Entity entity = Factory.createSmoke(properties[SMOKE_ID], pt,
+                    imageStore.getImageList(SMOKE_KEY));
+            this.tryAddEntity(entity);
+        }
+
+        return properties.length == SMOKE_NUM_PROPERTIES;
+    }
+
+    private  boolean parseMage(String[] properties, ImageStore imageStore)
+    {
+        if (properties.length == MAGE_NUM_PROPERTIES) {
+            Point pt = new Point(Integer.parseInt(properties[MAGE_COL]),
+                    Integer.parseInt(properties[MAGE_ROW]));
+            Entity entity = Factory.createMage(properties[MAGE_ID], pt,
+                    imageStore.getImageList(MAGE_KEY));
+            this.tryAddEntity(entity);
+        }
+
+        return properties.length == MAGE_NUM_PROPERTIES;
+    }
+
+
 }
+
+
 

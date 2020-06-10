@@ -29,6 +29,11 @@ public class Factory
         return new Ore_Blob(id, pos, images, actionPeriod, animationPeriod);
     }
 
+    public static Zombie createZombie(Point position, List<PImage> images)
+    {
+        return new Zombie("zombie", position, images, 1000, 1000);
+    }
+
     public static Quake createQuake( Point position, List<PImage> images)
     {
         return new Quake( QUAKE_ID, position, images,
@@ -38,6 +43,11 @@ public class Factory
     public static Ore createOre(String id, Point pos, int actionPeriod, List<PImage> images)
     {
         return new Ore(id, pos, images, actionPeriod);
+    }
+
+    public static Zombie_Spawn createZombie_Spawn(String id, Point position, int actionPeriod, List<PImage> images)
+    {
+        return new Zombie_Spawn(id, position, images, actionPeriod);
     }
     public static Blacksmith createBlacksmith(String id, Point pos, List<PImage> images)
     {
@@ -51,5 +61,28 @@ public class Factory
     {
         return new Obstacle(id, pos, images);
     }
+    public static Tomb createTomb(String id, Point pos, List<PImage> images)
+    {
+        return new Tomb(id, pos, images);
+    }
+
+    public static Fire createFire(String id, Point pos, List<PImage> images)
+    {
+        return new Fire(id, pos, images);
+    }
+
+    public static Smoke createSmoke(String id, Point pos, List<PImage> images)
+    {
+        return new Smoke(id, pos, images);
+    }
+
+    public static Mage createMage(String id, Point pos, List<PImage> images)
+    {
+        return new Mage(id, pos, images);
+    }
+
+    public static Skeleton createSkeleton(Point position, List<PImage> images)
+    {
+        return new Skeleton("skeleton", position, images, 425, 200);}
 
 }

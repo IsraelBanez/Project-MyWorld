@@ -28,4 +28,31 @@ grass images/grass.bmp
 rocks images/rock.bmp
 dirt images/dirt.bmp
 vein images/vein.bmp
+
+red images/reddirt.bmp
+skeleton images/skeleton.bmp
+tomb images/tomb2.bmp
+zombie images/zombie2.bmp
+minerZombie images/zombie.bmp
+mage images/mage.bmp
+fire images/fire12.bmp
+fire images/fire13.bmp
+fire images/fire14.bmp
+fire images/fire15.bmp
+smoke images/smoke1.bmp
+purpleSmoke images/smoke.bmp
+leftVoid images/left.bmp
+midVoid images/mid.bmp
+rightVoid images/right.bmp
+rubble images/rubble.bmp
+
+zombies images/zombies1.bmp 255 255 255 0
+zombies images/zombies2.bmp 255 255 255 0
+zombies images/zombies3.bmp 255 255 255 0
+zombies images/zombies4.bmp 255 255 255 0
+zombies images/zombies5.bmp 255 255 255 0
+zombies images/zombies6.bmp 255 255 255 0
+zombies images/zombies7.bmp 255 255 255 0
+zombies images/zombies8.bmp 255 255 255 0
+
 background_default images/none.bmp

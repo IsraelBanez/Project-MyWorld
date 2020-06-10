@@ -1,0 +1,38 @@
+/*
+1.)How to trigger the event?
+In order to trigger the event, you have to double click your mouse in any location. I would emphasise double clicking
+your mouse and not just single click after single click because a single click by itself, and even with follow up single
+clicks, would trigger a "vortex" that eliminates all entities within one unit to the left and right of the mouse point, including
+the mouse point. This vortex can be used to end the zombie spawns if clicked directly underneath the purple cloud (spawn point).
+
+2.)What should happen when the event is triggered?
+When double clicked, a small 3 by 3 temple/ plat covered by fire obstacles along each corner should appear. Within this temple
+exist a 2 by 2 shroud of smoke that surround the center. And within that center exists a mage as the figure head. Also,
+any miner within an 8 by 8 radius of the trigger will turn into skeletons. Moreover, I added new ".sav" files, changing
+the background of the map by spawning a "graveyard" at the center of the map with a bigger radius.
+And within that radius pops up tombstone and fire obstacles. And finally, there will also be a purple could right below
+the mage which acts as a spawn point for the zombies to start piling into the world.
+
+The zombies have a max count of 20. Or, as mentioned, one can limit the amount by establishing the vortex.
+
+3.)What the affected entities should do?
+The affected entities, which are the surrounding miners, turn into skeletons. These new skeleton minors will destroy all
+surrounding blacksmiths and then they will burn ore blobs within their proximity. Only when the blacksmiths are gone will
+they burn ore blobs within their proximity
+
+4.)What the new entity is and how it should behave?
+The new is Zombies and this new entity spawns from the purple cloud. It behaves by locating the nearest miners and turning
+them into "zombie miners". These new zombie miners also have the same behavior as the zombie spawns and will locate the
+nearest miner, turning them into zombie miners.
+Other entities such as fire, mage, smoke, and tombstone, behave like the obstacle entity and act as a barrier the "moving entities"
+have to go around.
+
+5.)(if applicable) the names of each partner and what each partner was responsible for?
+N/A
+
+Side Note-
+If you accidentally spawn the vortex first, it will only be an obstacle that the other entities will have to move around.
+You can just double click over it,  to spawn the temple as the temple removes anything within a 3 by 3 radius. But I
+don't recommend spawning multiple temples to get rid of these vortex cause the temple is meant to exist only once.
+
+*/

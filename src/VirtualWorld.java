@@ -1,5 +1,11 @@
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import processing.event.MouseEvent;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 import processing.core.*;
@@ -25,6 +31,8 @@ public final class VirtualWorld extends PApplet
     private static final int DEFAULT_IMAGE_COLOR = 0x808080;
 
     private static final String LOAD_FILE_NAME = "world.sav";
+    private static final String LOAD_FILE_RED = "myWorld.sav";
+    private static final String LOAD_FILE_TOMB = "raiseTomb.sav";
 
     private static final String FAST_FLAG = "-fast";
     private static final String FASTER_FLAG = "-faster";
@@ -95,11 +103,110 @@ public final class VirtualWorld extends PApplet
                 case RIGHT:
                     dx = 1;
                     break;
+
             }
             view.shiftView( dx, dy);
         }
     }
 
+    public void mouseClicked(MouseEvent e) {
+        int actionPeriod = 10000;
+        List<Point> radius = new ArrayList<>();
+        List<Point> radius2 = new ArrayList<>();
+        List<Point> radius3 = new ArrayList<>();
+        int x = mouseX / TILE_WIDTH;
+        int y = mouseY / TILE_HEIGHT;
+        int pressedX = x + view.getViewport().getCol();
+        int pressedY = y + view.getViewport().getRow();
+        Point point = new Point(pressedX, pressedY);
+        if (e.getCount() == 2) {
+            loadWorld(world, LOAD_FILE_RED, imageStore);
+            loadWorld(world, LOAD_FILE_TOMB, imageStore);
+
+
+            Background redFloor = new Background("red", imageStore.getImageList("red"));
+
+            for (int i = -1; i <= 1; i++) {
+                for (int j = -1; j <= 1; j++) {
+                    Point p = new Point(point.getX() + i, point.getY() + j);
+                    radius.add(p);
+                }
+            }
+
+
+            for (int i = -2; i <= 2; i++) {
+                for (int j = -2; j <= 2; j++) {
+                    Point p = new Point(point.getX() + i, point.getY() + j);
+                    radius2.add(p);
+                }
+            }
+            for (Point p : radius2) {
+                world.removeEntityAt(p);
+                world.setBackground(p, redFloor);
+
+            }
+            for (Point p : radius) {
+                world.removeEntityAt(p);
+                world.addEntity(new Smoke("smoke", p, imageStore.getImageList("smoke")));
+            }
+
+            for (int i = -8; i <= 8; i++) {
+                for (int j = -8; j <= 8; j++) {
+                    Point p = new Point(point.getX() + i, point.getY() + j);
+                    radius3.add(p);
+                }
+            }
+            for (Point p : radius3) {
+                if (world.isOccupied(p) && (world.getOccupant(p).get().getClass() == Miner_Not_Full.class || world.getOccupant(p).get().getClass() == Miner_Full.class)) {
+                    scheduler.unscheduleAllEvents(world.getOccupant(p).get());
+                    world.removeEntity(world.getOccupant(p).get());
+
+                    Skeleton zombie = new Skeleton("skeleton", p,
+                            imageStore.getImageList("skeleton"), 100,
+                            100);
+
+                    world.addEntity(zombie);
+                    zombie.scheduleActions(scheduler, world, imageStore);
+                }
+                Zombie_Spawn spawner = Factory.createZombie_Spawn("zombie", new Point(point.getX(), point.getY() + 2)
+                        , actionPeriod, imageStore.getImageList("purpleSmoke"));
+                world.addEntity(spawner);
+                spawner.scheduleActions(scheduler, world, imageStore);
+            }
+
+            world.removeEntityAt(new Point(point.getX(), point.getY()));
+            world.setBackground(new Point(point.getX(), point.getY()), new Background("rocks", imageStore.getImageList("rocks")));
+
+            String fire = "fire";
+            Fire firespawn = new Fire(fire, new Point(point.getX() + 2, point.getY() + 2), imageStore.getImageList(fire));
+            world.addEntity(firespawn);
+            Fire firespawn2 = new Fire(fire, new Point(point.getX() + 2, point.getY() - 2), imageStore.getImageList(fire));
+            world.addEntity(firespawn2);
+            Fire firespawn3 = new Fire(fire, new Point(point.getX() - 2, point.getY() + 2), imageStore.getImageList(fire));
+            world.addEntity(firespawn3);
+            Fire firespawn4 = new Fire(fire, new Point(point.getX() - 2, point.getY() - 2), imageStore.getImageList(fire));
+            world.addEntity(firespawn4);
+            String mage = "mage";
+            Mage mageSpawn = new Mage(mage, point, imageStore.getImageList(mage));
+            world.addEntity(mageSpawn);
+
+        }
+
+        if (e.getCount() == 1 ) {
+
+            world.removeEntityAt(new Point(point.getX(), point.getY()));
+            world.removeEntityAt(new Point(point.getX() - 1, point.getY()));
+            world.removeEntityAt( new Point(point.getX() + 1, point.getY()));
+            Obstacle voidspawn = new Obstacle("midVoid", new Point(point.getX(), point.getY()), imageStore.getImageList("midVoid"));
+            world.addEntity(voidspawn);
+            Obstacle voidspawn2 = new Obstacle("leftVoid", new Point(point.getX() - 1, point.getY()), imageStore.getImageList("leftVoid"));
+            world.addEntity(voidspawn2);
+            Obstacle voidspawn3 = new Obstacle("rightVoid", new Point(point.getX() + 1, point.getY()), imageStore.getImageList("rightVoid"));
+            world.addEntity(voidspawn3);
+
+        }
+
+    }
     public static Background createDefaultBackground(ImageStore imageStore) {
         return new Background(DEFAULT_IMAGE_NAME,
                               imageStore.getImageList(DEFAULT_IMAGE_NAME));
